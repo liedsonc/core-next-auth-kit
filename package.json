@@ -1,0 +1,51 @@
+{
+  "name": "@liedsonc/core-auth-kit",
+  "version": "0.1.0",
+  "description": "Production-ready authentication UI package for Next.js App Router",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./styles": "./styles/index.css"
+  },
+  "files": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.css"
+  ],
+  "dependencies": {
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.0"
+  },
+  "peerDependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  },
+  "keywords": [
+    "nextjs",
+    "auth",
+    "authentication",
+    "ui",
+    "shadcn",
+    "react",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liedsonc/core-auth-kit.git",
+    "directory": "auth-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/liedsonc/core-auth-kit/issues"
+  },
+    "homepage": "https://github.com/liedsonc/core-auth-kit#readme"
+}

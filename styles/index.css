@@ -1,0 +1,7 @@
+@layer auth-ui {
+  .auth-ui-card {
+    min-width: 0;
+    width: 100%;
+    max-width: 24rem;
+  }
+}
