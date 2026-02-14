@@ -8,9 +8,7 @@
     ".": "./index.ts",
     "./styles": "./styles/index.css"
   },
-  "bin": {
-    "core-auth-kit": "bin/init.js"
-  },
+  "bin": "bin/init.js",
   "files": [
     "**/*.ts",
     "**/*.tsx",
