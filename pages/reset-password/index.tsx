@@ -7,7 +7,7 @@ import { AuthCard } from "../../components/auth-card";
 import { AuthForm } from "../../components/auth-form";
 import { FormField } from "../../components/form-field";
 import { PasswordInput } from "../../components/password-input";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useState, Suspense } from "react";
 
 const genericError = "Something went wrong. Please request a new reset link.";

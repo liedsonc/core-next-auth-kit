@@ -10,8 +10,8 @@ import { FormField } from "../../components/form-field";
 import { OAuthButtons } from "../../components/oauth-buttons";
 import { PasswordInput } from "../../components/password-input";
 import { SuccessMessage } from "../../components/success-message";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { useCallback, useState } from "react";
 
 const genericError = "Something went wrong. Please try again.";

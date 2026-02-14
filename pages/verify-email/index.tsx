@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { AuthCard } from "../../components/auth-card";
 import { SuccessMessage } from "../../components/success-message";
 import { ErrorMessage } from "../../components/error-message";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import { useEffect, useState, Suspense } from "react";
 
 type VerifyState = "idle" | "loading" | "success" | "expired" | "invalid";

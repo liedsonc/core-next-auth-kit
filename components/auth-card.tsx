@@ -7,10 +7,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "./ui/card";
 import { useAuthUIConfig } from "../context";
-import { cn } from "@/lib/utils";
-import "@/auth-ui/styles/index.css";
+import { cn } from "../utils";
+import "../styles/index.css";
 
 export interface AuthCardProps {
   title: string;

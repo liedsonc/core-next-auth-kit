@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { useOAuth } from "../hooks/use-oauth";
-import { cn } from "@/lib/utils";
+import { cn } from "../utils";
 import type { OAuthProvider } from "../types";
 
 const providerLabels: Record<OAuthProvider, string> = {

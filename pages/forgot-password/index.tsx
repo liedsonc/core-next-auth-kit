@@ -6,8 +6,8 @@ import { AuthCard } from "../../components/auth-card";
 import { AuthForm } from "../../components/auth-form";
 import { FormField } from "../../components/form-field";
 import { SuccessMessage } from "../../components/success-message";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { useState } from "react";
 
 const successMessage =

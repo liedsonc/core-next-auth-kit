@@ -8,11 +8,21 @@
     ".": "./index.ts",
     "./styles": "./styles/index.css"
   },
+  "bin": {
+    "core-auth-kit": "bin/init.js"
+  },
   "files": [
     "**/*.ts",
     "**/*.tsx",
-    "**/*.css"
+    "**/*.css",
+    "**/*.js",
+    "templates"
   ],
+  "scripts": {
+    "build": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "publish": "npm publish --access public"
+  },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -41,11 +51,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/liedsonc/core-auth-kit.git",
+    "url": "git+https://github.com/liedsonc/core-auth-kit.git",
     "directory": "auth-ui"
   },
   "bugs": {
     "url": "https://github.com/liedsonc/core-auth-kit/issues"
   },
-    "homepage": "https://github.com/liedsonc/core-auth-kit#readme"
+  "homepage": "https://github.com/liedsonc/core-auth-kit#readme"
 }

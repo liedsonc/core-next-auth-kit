@@ -9,8 +9,8 @@ import { AuthForm } from "../../components/auth-form";
 import { FormField } from "../../components/form-field";
 import { OAuthButtons } from "../../components/oauth-buttons";
 import { PasswordInput } from "../../components/password-input";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
 import { useCallback, useState } from "react";
 
 const genericError = "Invalid email or password. Please try again.";
