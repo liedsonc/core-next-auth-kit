@@ -1,5 +1,7 @@
 export { AuthCard } from "./auth-card";
 export { AuthForm } from "./auth-form";
+export { AuthPageLayout } from "./auth-page-layout";
+export { TermsDisclaimer } from "./terms-disclaimer";
 export { ErrorMessage } from "./error-message";
 export { FormField } from "./form-field";
 export { LoadingSpinner } from "./loading-spinner";

@@ -1,6 +1,18 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 export type OAuthProvider = "google" | "apple";
+
+export interface AuthUIComponents {
+  Button: ComponentType<any>;
+  Input: ComponentType<any>;
+  Label: ComponentType<any>;
+  Card: ComponentType<any>;
+  CardHeader: ComponentType<any>;
+  CardTitle: ComponentType<any>;
+  CardDescription: ComponentType<any>;
+  CardContent: ComponentType<any>;
+  CardFooter: ComponentType<any>;
+}
 
 export interface AuthError {
   code: string;
@@ -31,4 +43,12 @@ export interface AuthUIConfig {
   redirectAfterLogin?: string;
   redirectAfterRegister?: string;
   redirectAfterReset?: string;
+  components?: AuthUIComponents;
+  layout?: "centered" | "split";
+  brandName?: string;
+  testimonial?: { quote: string; author: string };
+  termsUrl?: string;
+  privacyUrl?: string;
+  leftColumnClassName?: string;
+  formOrder?: "oauthFirst" | "emailFirst";
 }

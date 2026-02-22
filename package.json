@@ -1,32 +1,40 @@
 {
   "name": "@liedsonc/core-auth-kit",
-  "version": "0.1.0",
+  "version": "2.2.0",
   "description": "Production-ready authentication UI package for Next.js App Router",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
     "./styles": "./styles/index.css"
   },
-  "bin": "bin/init.js",
+  "bin": {
+    "core-auth-kit": "./bin/init.js",
+    "@liedsonc/core-auth-kit": "./bin/init.js"
+  },
   "files": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.css",
-    "**/*.js",
+    "dist",
+    "styles",
+    "bin",
     "templates"
   ],
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^2.5.0"
+    "tailwind-merge": "^2.5.0",
+    "lucide-react": "^0.460.0"
   },
   "peerDependencies": {
     "next": "^15.0.0",
