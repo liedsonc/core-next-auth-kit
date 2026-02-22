@@ -17,6 +17,7 @@ const TEMPLATE_MAP = [
   { template: "app/(auth)/verify-email/page.tsx", target: "app/(auth)/verify-email/page.tsx" },
   { template: "lib/auth-config.ts", target: "lib/auth-config.ts" },
   { template: "lib/auth-client.ts", target: "lib/auth-client.ts" },
+  { template: "lib/email-templates.ts", target: "lib/email-templates.ts" },
   { template: "env.example", target: ".env.example" },
   { template: "app/api/auth/login/route.ts", target: "app/api/auth/login/route.ts" },
   { template: "app/api/auth/register/route.ts", target: "app/api/auth/register/route.ts" },
@@ -65,8 +66,25 @@ function installPackage(root) {
   console.log("");
 }
 
+function hasShadcn(root) {
+  return fs.existsSync(path.join(root, "components.json"));
+}
+
+function runShadcnInit(root) {
+  console.log("Initializing shadcn/ui...");
+  execSync("npx shadcn@latest init -y", { cwd: root, stdio: "inherit" });
+  console.log("");
+}
+
+function runShadcnAdd(root) {
+  console.log("Adding shadcn components (button, input, card, label)...");
+  execSync("npx shadcn@latest add button input card label -y", { cwd: root, stdio: "inherit" });
+  console.log("");
+}
+
 function run() {
   const force = process.argv.includes("--force");
+  const noShadcn = process.argv.includes("--no-shadcn");
   const cwd = process.cwd();
   const root = findProjectRoot(cwd);
 
@@ -81,6 +99,13 @@ function run() {
     installPackage(root);
   }
 
+  if (!noShadcn) {
+    if (!hasShadcn(root)) {
+      runShadcnInit(root);
+    }
+    runShadcnAdd(root);
+  }
+
   const appDir = detectAppDir(root);
   const libDir = detectLibDir(root);
 
@@ -88,6 +113,10 @@ function run() {
   let skipped = 0;
 
   for (const { template, target } of TEMPLATE_MAP) {
+    const templateSource =
+      template === "lib/auth-config.ts" && !noShadcn
+        ? "lib/auth-config.with-shadcn.ts"
+        : template;
     const targetPath = target.startsWith("app/")
       ? path.join(root, appDir, target.slice("app/".length))
       : target.startsWith("lib/")
@@ -96,7 +125,7 @@ function run() {
           ? path.join(root, ".env.example")
           : path.join(root, target);
 
-    const templatePath = path.join(TEMPLATES_DIR, template);
+    const templatePath = path.join(TEMPLATES_DIR, templateSource);
     if (!fs.existsSync(templatePath)) {
       console.warn("Template not found:", template);
       continue;
