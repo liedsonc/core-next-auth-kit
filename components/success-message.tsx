@@ -16,7 +16,7 @@ export function SuccessMessage({
     <p
       id={id}
       role="status"
-      className={cn("text-sm text-green-600 dark:text-green-400", className)}
+      className={cn("text-base text-green-600 dark:text-green-400", className)}
     >
       {children}
     </p>

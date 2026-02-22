@@ -1,8 +1,8 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import * as React from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { useAuthUIComponents } from "../hooks/use-auth-ui-components";
 import { cn } from "../utils";
 
 function getStrength(value: string): 0 | 1 | 2 | 3 {
@@ -15,7 +15,7 @@ function getStrength(value: string): 0 | 1 | 2 | 3 {
 }
 
 export interface PasswordInputProps
-  extends Omit<React.ComponentProps<typeof Input>, "type"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   showStrength?: boolean;
 }
 
@@ -25,19 +25,20 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
     const [value, setValue] = React.useState("");
     const id = React.useId();
     const strength = showStrength ? getStrength(value) : 0;
+    const { Input, Button } = useAuthUIComponents();
 
     return (
-      <div className="space-y-1.5">
-        <div className="relative">
+      <div className="auth-ui-password-stack">
+        <div className="auth-ui-password-wrap">
           <Input
             ref={ref}
             type={show ? "text" : "password"}
             autoComplete="current-password"
             aria-describedby={showStrength ? `${id}-strength` : undefined}
-            className={cn("pr-10", className)}
+            className={cn("auth-ui-password-input", className)}
             {...props}
             value={props.value ?? value}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setValue(e.target.value);
               props.onChange?.(e);
             }}
@@ -46,15 +47,17 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            className="auth-ui-password-toggle"
             aria-label={show ? "Hide password" : "Show password"}
             aria-pressed={show}
             onClick={() => setShow((p) => !p)}
             tabIndex={-1}
           >
-            <span className="text-xs font-medium" aria-hidden="true">
-              {show ? "Hide" : "Show"}
-            </span>
+            {show ? (
+              <EyeOff className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <Eye className="h-4 w-4 text-muted-foreground" />
+            )}
           </Button>
         </div>
         {showStrength && value && (

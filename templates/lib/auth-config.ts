@@ -33,11 +33,14 @@ export function getOAuthProvidersFromEnv(): OAuthProviderConfig[] {
 }
 
 export function getAuthUIConfig(): AuthUIConfig {
-  return {
+  const base = {
     authClient,
     oauthProviders: getOAuthProvidersFromEnv(),
     redirectAfterLogin: process.env.NEXT_PUBLIC_AUTH_REDIRECT_AFTER_LOGIN || "/",
     redirectAfterRegister: process.env.NEXT_PUBLIC_AUTH_REDIRECT_AFTER_REGISTER || "/login",
     redirectAfterReset: process.env.NEXT_PUBLIC_AUTH_REDIRECT_AFTER_RESET || "/login",
+  };
+  return {
+    ...base,
   };
 }
