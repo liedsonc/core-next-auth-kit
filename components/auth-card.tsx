@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
 import { useAuthUIConfig } from "../context";
+import { useAuthUIComponents } from "../hooks/use-auth-ui-components";
 import { cn } from "../utils";
-import "../styles/index.css";
 
 export interface AuthCardProps {
   title: string;
@@ -28,22 +20,25 @@ export function AuthCard({
   className,
 }: AuthCardProps) {
   const config = useAuthUIConfig();
+  const { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } = useAuthUIComponents();
 
   return (
-    <Card className={cn("auth-ui-card", className)}>
-      <CardHeader className="space-y-1">
+    <Card
+      className={cn("auth-ui-card flex flex-col gap-4 px-6 sm:px-8", className)}
+    >
+      <CardHeader className="space-y-2 pt-0 px-0">
         {config.logo && (
           <div className="flex justify-center mb-2" aria-hidden="true">
             {config.logo}
           </div>
         )}
-        <CardTitle className="text-center">{title}</CardTitle>
+        <CardTitle className="text-center text-5xl">{title}</CardTitle>
         {subtitle && (
-          <CardDescription className="text-center">{subtitle}</CardDescription>
+          <CardDescription className="text-center text-xl">{subtitle}</CardDescription>
         )}
       </CardHeader>
-      <CardContent>{children}</CardContent>
-      {footer && <CardFooter className="flex flex-col gap-2">{footer}</CardFooter>}
+      <CardContent className="pt-0 px-0">{children}</CardContent>
+      {footer && <CardFooter className="flex flex-col gap-2 pt-0 px-0">{footer}</CardFooter>}
     </Card>
   );
 }
