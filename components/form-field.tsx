@@ -1,6 +1,6 @@
 "use client";
 
-import { Label } from "./ui/label";
+import { useAuthUIComponents } from "../hooks/use-auth-ui-components";
 import { cn } from "../utils";
 
 export function FormField({
@@ -18,8 +18,9 @@ export function FormField({
   required?: boolean;
   className?: string;
 }) {
+  const { Label } = useAuthUIComponents();
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("auth-ui-form-field", className)}>
       <Label htmlFor={htmlFor}>
         {label}
         {required && (

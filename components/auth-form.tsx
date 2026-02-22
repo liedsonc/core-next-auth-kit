@@ -38,7 +38,7 @@ export function AuthForm({
     <form
       onSubmit={handleSubmit}
       noValidate
-      className={cn("space-y-4", className)}
+      className={cn("auth-ui-form-stack", className)}
       aria-busy={isDisabled}
       {...props}
     >

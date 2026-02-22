@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useAuth } from "../../hooks/use-auth";
 import { AuthCard } from "../../components/auth-card";
 import { AuthForm } from "../../components/auth-form";
+import { AuthPageLayout } from "../../components/auth-page-layout";
 import { FormField } from "../../components/form-field";
 import { SuccessMessage } from "../../components/success-message";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { useAuthUIComponents } from "../../hooks/use-auth-ui-components";
 import { useState } from "react";
 
 const successMessage =
   "If an account exists for this email, you will receive a link to reset your password.";
 
 export function ForgotPasswordPage() {
+  const { Button, Input } = useAuthUIComponents();
   const { forgotPassword, loading, error, clearError } = useAuth();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -32,12 +33,12 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <AuthPageLayout>
       <AuthCard
         title="Forgot password"
         subtitle="Enter your email and we'll send you a reset link"
         footer={
-          <div className="flex w-full justify-center text-sm text-muted-foreground">
+          <div className="flex w-full justify-center text-base text-muted-foreground">
             <Link
               href="/login"
               className="underline underline-offset-4 hover:text-foreground"
@@ -50,12 +51,11 @@ export function ForgotPasswordPage() {
         {submitted ? (
           <SuccessMessage>{successMessage}</SuccessMessage>
         ) : (
-          <AuthForm onSubmit={handleSubmit} loading={loading}>
-            {error && (
-              <p role="alert" className="text-sm text-destructive">
-                Something went wrong. Please try again later.
-              </p>
-            )}
+          <AuthForm
+            onSubmit={handleSubmit}
+            loading={loading}
+            error={error ? "Something went wrong. Please try again later." : undefined}
+          >
             <FormField label="Email" htmlFor="forgot-email" error={fieldError} required>
               <Input
                 id="forgot-email"
@@ -63,7 +63,7 @@ export function ForgotPasswordPage() {
                 autoComplete="email"
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 disabled={loading}
                 aria-invalid={!!fieldError}
               />
@@ -78,6 +78,6 @@ export function ForgotPasswordPage() {
           </AuthForm>
         )}
       </AuthCard>
-    </div>
+    </AuthPageLayout>
   );
 }

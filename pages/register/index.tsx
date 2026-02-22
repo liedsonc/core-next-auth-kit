@@ -6,12 +6,13 @@ import { useOAuth } from "../../hooks/use-oauth";
 import { useAuthUIConfig } from "../../context";
 import { AuthCard } from "../../components/auth-card";
 import { AuthForm } from "../../components/auth-form";
+import { AuthPageLayout } from "../../components/auth-page-layout";
 import { FormField } from "../../components/form-field";
 import { OAuthButtons } from "../../components/oauth-buttons";
 import { PasswordInput } from "../../components/password-input";
 import { SuccessMessage } from "../../components/success-message";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { TermsDisclaimer } from "../../components/terms-disclaimer";
+import { useAuthUIComponents } from "../../hooks/use-auth-ui-components";
 import { useCallback, useState } from "react";
 
 const genericError = "Something went wrong. Please try again.";
@@ -19,6 +20,7 @@ const duplicateError = "An account with this email already exists.";
 
 export function RegisterPage() {
   const config = useAuthUIConfig();
+  const { Button, Input } = useAuthUIComponents();
   const { register, loading, error, clearError } = useAuth();
   const oauthProviders = config.oauthProviders ?? [];
   const { signIn, loadingProvider } = useOAuth(
@@ -60,19 +62,91 @@ export function RegisterPage() {
     }
   };
 
+  const formOrder = config.formOrder ?? "oauthFirst";
+  const divider = (
+    <div className="relative">
+      <div className="absolute inset-0 flex items-center">
+        <span className="w-full border-t border-border" />
+      </div>
+      <div className="relative flex justify-center text-sm uppercase">
+        <span className="bg-card px-2 text-muted-foreground">
+          {formOrder === "emailFirst" ? "Or continue with" : "Or continue with email"}
+        </span>
+      </div>
+    </div>
+  );
+  const emailPasswordBlock = (
+    <>
+      <FormField label="Email" htmlFor="register-email" error={fieldErrors.email} required>
+        <Input
+          id="register-email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          disabled={loading}
+          aria-invalid={!!fieldErrors.email}
+        />
+      </FormField>
+      <FormField label="Password" htmlFor="register-password" error={fieldErrors.password} required>
+        <PasswordInput
+          id="register-password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+          showStrength
+          aria-invalid={!!fieldErrors.password}
+        />
+      </FormField>
+      <FormField
+        label="Confirm password"
+        htmlFor="register-confirm"
+        error={fieldErrors.confirm}
+        required
+      >
+        <PasswordInput
+          id="register-confirm"
+          placeholder="••••••••"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          disabled={loading}
+          aria-invalid={!!fieldErrors.confirm}
+        />
+      </FormField>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? (
+          <span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          "Create account"
+        )}
+      </Button>
+    </>
+  );
+  const oauthBlock = (
+    <OAuthButtons
+      providers={oauthProviders}
+      loadingProvider={loadingProvider}
+      onSignIn={signIn}
+    />
+  );
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <AuthPageLayout topRightLink={{ href: "/login", label: "Login" }}>
       <AuthCard
         title="Create an account"
         subtitle="Enter your details to get started"
         footer={
-          <div className="flex w-full justify-center text-sm text-muted-foreground">
+          <div className="flex w-full flex-col items-center gap-2 text-center text-base text-muted-foreground">
             <Link
               href="/login"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Already have an account? Sign in
             </Link>
+            <TermsDisclaimer />
           </div>
         }
       >
@@ -81,69 +155,23 @@ export function RegisterPage() {
             Check your email to verify your account. You can sign in after verification.
           </SuccessMessage>
         ) : (
-          <AuthForm onSubmit={handleSubmit} loading={loading} error={error ? genericError : undefined}>
-            <OAuthButtons
-              providers={oauthProviders}
-              loadingProvider={loadingProvider}
-              onSignIn={signIn}
-            />
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
-              </div>
-            </div>
-            <FormField label="Email" htmlFor="register-email" error={fieldErrors.email} required>
-              <Input
-                id="register-email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                aria-invalid={!!fieldErrors.email}
-              />
-            </FormField>
-            <FormField label="Password" htmlFor="register-password" error={fieldErrors.password} required>
-              <PasswordInput
-                id="register-password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                showStrength
-                aria-invalid={!!fieldErrors.password}
-              />
-            </FormField>
-            <FormField
-              label="Confirm password"
-              htmlFor="register-confirm"
-              error={fieldErrors.confirm}
-              required
-            >
-              <PasswordInput
-                id="register-confirm"
-                placeholder="••••••••"
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                aria-invalid={!!fieldErrors.confirm}
-              />
-            </FormField>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              ) : (
-                "Create account"
-              )}
-            </Button>
+          <AuthForm onSubmit={handleSubmit} loading={loading} error={error && !fieldErrors.email ? genericError : undefined}>
+            {formOrder === "emailFirst" ? (
+              <>
+                {emailPasswordBlock}
+                {divider}
+                {oauthBlock}
+              </>
+            ) : (
+              <>
+                {oauthBlock}
+                {divider}
+                {emailPasswordBlock}
+              </>
+            )}
           </AuthForm>
         )}
       </AuthCard>
-    </div>
+    </AuthPageLayout>
   );
 }

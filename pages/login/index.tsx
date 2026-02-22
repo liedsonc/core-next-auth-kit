@@ -6,17 +6,19 @@ import { useOAuth } from "../../hooks/use-oauth";
 import { useAuthUIConfig } from "../../context";
 import { AuthCard } from "../../components/auth-card";
 import { AuthForm } from "../../components/auth-form";
+import { AuthPageLayout } from "../../components/auth-page-layout";
 import { FormField } from "../../components/form-field";
 import { OAuthButtons } from "../../components/oauth-buttons";
 import { PasswordInput } from "../../components/password-input";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { TermsDisclaimer } from "../../components/terms-disclaimer";
+import { useAuthUIComponents } from "../../hooks/use-auth-ui-components";
 import { useCallback, useState } from "react";
 
 const genericError = "Invalid email or password. Please try again.";
 
 export function LoginPage() {
   const config = useAuthUIConfig();
+  const { Button, Input } = useAuthUIComponents();
   const { login, loading, error, clearError } = useAuth();
   const oauthProviders = config.oauthProviders ?? [];
   const { signIn, loadingProvider } = useOAuth(
@@ -47,13 +49,67 @@ export function LoginPage() {
     if (!result.success) setFieldErrors({ password: genericError });
   };
 
+  const formOrder = config.formOrder ?? "oauthFirst";
+  const divider = (
+    <div className="relative">
+      <div className="absolute inset-0 flex items-center">
+        <span className="w-full border-t border-border" />
+      </div>
+      <div className="relative flex justify-center text-sm uppercase">
+        <span className="bg-card px-2 text-muted-foreground">
+          {formOrder === "emailFirst" ? "Or continue with" : "Or continue with email"}
+        </span>
+      </div>
+    </div>
+  );
+  const emailPasswordBlock = (
+    <>
+      <FormField label="Email" htmlFor="login-email" error={fieldErrors.email} required>
+        <Input
+          id="login-email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          disabled={loading}
+          aria-invalid={!!fieldErrors.email}
+        />
+      </FormField>
+      <FormField label="Password" htmlFor="login-password" error={fieldErrors.password} required>
+        <PasswordInput
+          id="login-password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+          aria-invalid={!!fieldErrors.password}
+        />
+      </FormField>
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? (
+          <span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        ) : (
+          "Sign in"
+        )}
+      </Button>
+    </>
+  );
+  const oauthBlock = (
+    <OAuthButtons
+      providers={oauthProviders}
+      loadingProvider={loadingProvider}
+      onSignIn={signIn}
+    />
+  );
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+    <AuthPageLayout topRightLink={{ href: "/register", label: "Create an account" }}>
       <AuthCard
         title="Sign in"
         subtitle="Enter your credentials to continue"
         footer={
-          <div className="flex w-full flex-col items-center gap-2 text-center text-sm text-muted-foreground">
+          <div className="flex w-full flex-col items-center gap-2 text-center text-base text-muted-foreground">
             <Link
               href="/register"
               className="underline underline-offset-4 hover:text-foreground"
@@ -66,54 +122,26 @@ export function LoginPage() {
             >
               Forgot password?
             </Link>
+            <TermsDisclaimer />
           </div>
         }
       >
-        <AuthForm onSubmit={handleSubmit} loading={loading} error={error ? genericError : undefined}>
-          <OAuthButtons
-            providers={oauthProviders}
-            loadingProvider={loadingProvider}
-            onSignIn={signIn}
-          />
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
-            </div>
-          </div>
-          <FormField label="Email" htmlFor="login-email" error={fieldErrors.email} required>
-            <Input
-              id="login-email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              aria-invalid={!!fieldErrors.email}
-            />
-          </FormField>
-          <FormField label="Password" htmlFor="login-password" error={fieldErrors.password} required>
-            <PasswordInput
-              id="login-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              aria-invalid={!!fieldErrors.password}
-            />
-          </FormField>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            ) : (
-              "Sign in"
-            )}
-          </Button>
+        <AuthForm onSubmit={handleSubmit} loading={loading} error={error && !fieldErrors.password ? genericError : undefined}>
+          {formOrder === "emailFirst" ? (
+            <>
+              {emailPasswordBlock}
+              {divider}
+              {oauthBlock}
+            </>
+          ) : (
+            <>
+              {oauthBlock}
+              {divider}
+              {emailPasswordBlock}
+            </>
+          )}
         </AuthForm>
       </AuthCard>
-    </div>
+    </AuthPageLayout>
   );
 }
