@@ -1,6 +1,6 @@
 {
-  "name": "@liedsonc/core-auth-kit",
-  "version": "2.2.0",
+  "name": "@akira-io/core-auth-kit",
+  "version": "2.2.1",
   "description": "Production-ready authentication UI package for Next.js App Router",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
