@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const readline = require("readline/promises");
 
 const PKG_NAME = "@liedsonc/core-auth-kit";
 const PKG_ROOT = path.resolve(__dirname, "..");
@@ -60,9 +61,44 @@ function isPackageInstalled(root) {
   return fs.existsSync(path.join(pkgDir, "package.json"));
 }
 
-function installPackage(root) {
+async function askPackageManager() {
+  const preferred = "npm";
+  const options = ["npm", "pnpm", "yarn", "bun"];
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  try {
+    console.log("Select package manager:");
+    options.forEach((option, index) => {
+      const marker = option === preferred ? " (default)" : "";
+      console.log("%d) %s%s", index + 1, option, marker);
+    });
+    const answer = await rl.question("Choice [1-4]: ");
+    const value = answer.trim().toLowerCase();
+    const numeric = Number.parseInt(value, 10);
+    if (Number.isInteger(numeric) && numeric >= 1 && numeric <= options.length) {
+      return options[numeric - 1];
+    }
+    if (options.includes(value)) return value;
+    return preferred;
+  } finally {
+    rl.close();
+    console.log("");
+  }
+}
+
+function installPackage(root, packageManager) {
   console.log("Installing %s...", PKG_NAME);
-  execSync("npm install " + PKG_NAME, { cwd: root, stdio: "inherit" });
+  const command =
+    packageManager === "pnpm"
+      ? "pnpm add " + PKG_NAME
+      : packageManager === "yarn"
+        ? "yarn add " + PKG_NAME
+        : packageManager === "bun"
+          ? "bun add " + PKG_NAME
+          : "npm install " + PKG_NAME;
+  execSync(command, { cwd: root, stdio: "inherit" });
   console.log("");
 }
 
@@ -70,19 +106,35 @@ function hasShadcn(root) {
   return fs.existsSync(path.join(root, "components.json"));
 }
 
-function runShadcnInit(root) {
+function runShadcnInit(root, packageManager) {
   console.log("Initializing shadcn/ui...");
-  execSync("npx shadcn@latest init -y", { cwd: root, stdio: "inherit" });
+  const command =
+    packageManager === "pnpm"
+      ? "pnpm dlx shadcn@latest init -y"
+      : packageManager === "yarn"
+        ? "yarn dlx shadcn@latest init -y"
+        : packageManager === "bun"
+          ? "bunx shadcn@latest init -y"
+          : "npm exec shadcn@latest init -y";
+  execSync(command, { cwd: root, stdio: "inherit" });
   console.log("");
 }
 
-function runShadcnAdd(root) {
+function runShadcnAdd(root, packageManager) {
   console.log("Adding shadcn components (button, input, card, label)...");
-  execSync("npx shadcn@latest add button input card label -y", { cwd: root, stdio: "inherit" });
+  const command =
+    packageManager === "pnpm"
+      ? "pnpm dlx shadcn@latest add button input card label -y"
+      : packageManager === "yarn"
+        ? "yarn dlx shadcn@latest add button input card label -y"
+        : packageManager === "bun"
+          ? "bunx shadcn@latest add button input card label -y"
+          : "npm exec shadcn@latest add button input card label -y";
+  execSync(command, { cwd: root, stdio: "inherit" });
   console.log("");
 }
 
-function run() {
+async function run() {
   const force = process.argv.includes("--force");
   const noShadcn = process.argv.includes("--no-shadcn");
   const cwd = process.cwd();
@@ -95,15 +147,17 @@ function run() {
     process.exit(1);
   }
 
+  const packageManager = await askPackageManager();
+
   if (!isPackageInstalled(root)) {
-    installPackage(root);
+    installPackage(root, packageManager);
   }
 
   if (!noShadcn) {
     if (!hasShadcn(root)) {
-      runShadcnInit(root);
+      runShadcnInit(root, packageManager);
     }
-    runShadcnAdd(root);
+    runShadcnAdd(root, packageManager);
   }
 
   const appDir = detectAppDir(root);
@@ -152,4 +206,7 @@ function run() {
   console.log("Next: implement lib/auth-client.ts (or src/lib/auth-client.ts) with your backend.");
 }
 
-run();
+run().catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+});
